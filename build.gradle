@@ -1,0 +1,102 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.12.RELEASE' apply false
+}
+
+ext{
+    springBootVersion = '2.3.12.RELEASE'
+    springCloudVersion = 'Hoxton.SR12'
+    springCloudAlibabaVersion = '2.2.7.RELEASE'
+}
+
+group 'com.ebootech.xplanet'
+version '1.0-SNAPSHOT'
+
+subprojects {
+
+    group 'com.ebootech.xplanet'
+    version '1.2.2'
+    boolean isParentProject = project.getSubprojects().size() > 0;
+    if (!isParentProject) {
+        apply plugin: 'java'
+    }
+
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabaVersion}"
+        }
+
+        dependencies {
+
+            dependency "io.github.openfeign:feign-httpclient:10.12"
+            dependency "io.fabric8:kubernetes-client:5.6.0"
+
+            //service
+            dependency "org.apache.dubbo:dubbo:3.0.2"
+            dependency "org.apache.dubbo:dubbo-spring-boot-starter:3.0.2"
+            dependency "org.apache.rocketmq:rocketmq-client:4.9.2"
+            dependency "org.apache.rocketmq:rocketmq-spring-boot-starter:2.2.1"
+            dependency 'com.xuxueli:xxl-job-core:2.3.0'
+
+            //data
+            dependency "org.redisson:redisson-spring-boot-starter:3.16.6"
+            dependency "org.redisson:redisson-spring-data-23:3.16.6"
+            dependency "org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0"
+            dependency "com.baomidou:mybatis-plus-boot-starter:3.4.3.4"
+            dependency "org.apache.shardingsphere:shardingsphere-jdbc-core-spring-boot-starter:5.0.0"
+            dependency "mysql:mysql-connector-java:8.0.25"
+
+            //api-client
+            dependency "com.alibaba.cloud:spring-cloud-starter-alicloud-oss:2.2.0.RELEASE"
+            dependency "com.alibaba.cloud:spring-cloud-starter-alicloud-sms:2.2.0.RELEASE"
+            dependency "cn.rongcloud.im:server-sdk-java:3.2.11"
+            dependency "com.google.apis:google-api-services-androidpublisher:v3-rev20210605-1.32.1"
+
+            //utils
+            dependency "org.projectlombok:lombok:1.18.20"
+            dependency "cn.hutool:hutool-all:5.7.2"
+            dependency "cglib:cglib:3.3.0"
+            dependency "commons-io:commons-io:2.11.0"
+            dependency "com.auth0:java-jwt:3.18.1"
+            dependency "io.netty:netty-all:4.1.65.Final"
+            /*dependency "org.hibernate.validator:hibernate-validator:7.0.1.Final"
+            dependency "jakarta.validation:jakarta.validation-api:3.0.0"
+            dependency "org.glassfish:jakarta.el:4.0.0"*/
+            dependency "org.mapstrjakarta.validation:jakarta.validation-apiuct:1.4.2.Final"
+            dependency "org.mapstruct:mapstruct:1.4.2.Final"
+            dependency "org.mapstruct:mapstruct-processor:1.4.2.Final"
+            dependency "org.apache.poi:poi-ooxml:4.1.2"
+
+        }
+    }
+
+    if (!isParentProject) {
+        dependencies {
+            implementation 'cn.hutool:hutool-all'
+            compileOnly 'org.mapstruct:mapstruct'
+            compileOnly 'org.projectlombok:lombok'
+            annotationProcessor 'org.projectlombok:lombok'
+            annotationProcessor 'org.mapstruct:mapstruct-processor'
+
+            //testImplementation 'org.springframework.boot:spring-boot-test'
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.3'
+            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.3'
+            testCompileOnly 'org.mapstruct:mapstruct'
+            testCompileOnly 'org.projectlombok:lombok'
+            testAnnotationProcessor 'org.projectlombok:lombok'
+            testAnnotationProcessor 'org.mapstruct:mapstruct-processor'
+        }
+
+        test {
+            useJUnitPlatform()
+        }
+    }
+}
+
