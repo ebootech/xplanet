@@ -1,4 +1,5 @@
 archivesBaseName='xplanet-connector'
 
 dependencies {
+    implementation project('')
 }
