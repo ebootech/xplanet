@@ -8,7 +8,7 @@ ext{
     springCloudAlibabaVersion = '2.2.7.RELEASE'
 }
 
-group 'com.ebootech.xplanet'
+group 'tech.eboot.xplanet'
 version '1.0-SNAPSHOT'
 
 subprojects {
