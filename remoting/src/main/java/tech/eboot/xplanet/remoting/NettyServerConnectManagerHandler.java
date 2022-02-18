@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.remoting.server;
+package tech.eboot.xplanet.remoting;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

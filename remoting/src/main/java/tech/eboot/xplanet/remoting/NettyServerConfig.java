@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.remoting.server;
+package tech.eboot.xplanet.remoting;
 
 import io.netty.util.NettyRuntime;
 import lombok.Getter;
