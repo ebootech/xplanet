@@ -1,5 +1,3 @@
-archivesBaseName='xplanet-connector'
-
 dependencies {
-    implementation project('')
+    implementation project(':remoting')
 }
