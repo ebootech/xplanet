@@ -1,4 +1,8 @@
+apply plugin:'org.springframework.boot'
+
 dependencies {
+    implementation project(':common')
     implementation project(':remoting')
     implementation project(':storage')
+    implementation 'org.springframework.boot:spring-boot-starter'
 }
