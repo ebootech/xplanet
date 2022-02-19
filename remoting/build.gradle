@@ -1,5 +1,9 @@
+plugins {
+    id 'java-library'
+}
+
 dependencies {
-    implementation 'io.netty:netty-all'
-    implementation 'org.slf4j:slf4j-api'
-    //implementation 'org.springframework.boot:spring-boot-starter-logging'
+    api 'io.netty:netty-all'
+    api 'org.slf4j:slf4j-api'
+    testImplementation 'org.springframework.boot:spring-boot-starter-logging'
 }
