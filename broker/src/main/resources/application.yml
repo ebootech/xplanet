@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: broker
+
+broker:
+  name: broker0
+  message:
+    port: 10937
+  dispatcher:
+    port: 11937

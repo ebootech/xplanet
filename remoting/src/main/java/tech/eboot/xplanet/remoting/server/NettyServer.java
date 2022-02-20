@@ -154,16 +154,16 @@ public class NettyServer extends NettyAbstract
                 ? new InetSocketAddress(serverConfig.getPort())
                 : new InetSocketAddress(serverConfig.getHost(), serverConfig.getPort());
         ChannelFuture future = bootstrap.bind(address);
-        future.addListener(new ChannelFutureListener() {
+        /*future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    log.info("NettyServer is running on port: {}", serverConfig.getPort());
+                    log.debug("NettyServer is running on port: {}", serverConfig.getPort());
                 } else {
-                    log.error("Fail to start NettyServer", future.cause());
+                    log.debug("Fail to start NettyServer", future.cause());
                 }
             }
-        });
+        });*/
         return future;
     }
 

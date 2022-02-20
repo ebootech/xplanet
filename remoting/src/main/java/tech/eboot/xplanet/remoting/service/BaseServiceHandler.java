@@ -1,9 +1,11 @@
 package tech.eboot.xplanet.remoting.service;
 
-import tech.eboot.xplanet.common.util.JsonUtils;
+import tech.eboot.xplanet.common.util.StringConverter;
+import tech.eboot.xplanet.remoting.protocol.Message;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author TangThree
@@ -32,10 +34,11 @@ public abstract class BaseServiceHandler<T> implements NettyServiceHandler {
     }
 
     @Override
-    public Object handleMessage(MessageContext context, long messageId, String body) {
-        Object message = (messageType == CharSequence.class || messageType == String.class) ? body : JsonUtils.readObject(body, messageType);
-        return processMessage(context, messageId, (T)message);
+    public Object handleMessage(MessageContext context, Message message) {
+        String body = new String(message.getBody(), StandardCharsets.UTF_8);
+        Object messageBody = StringConverter.stringToObj(body, messageType);
+        return handleMessage(context, message.getId(), (T)messageBody);
     }
 
-    protected abstract Object processMessage(MessageContext context, long messageId, T message);
+    protected abstract Object handleMessage(MessageContext context, long messageId, T message);
 }

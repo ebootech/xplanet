@@ -9,7 +9,6 @@ import tech.eboot.xplanet.common.util.JsonUtils;
 import tech.eboot.xplanet.remoting.protocol.Message;
 import tech.eboot.xplanet.remoting.protocol.MessageType;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,10 +61,11 @@ public class ServiceDispatcherChannelHandler extends SimpleChannelInboundHandler
         try {
             MessageContext messageContext = new MessageContext();
             messageContext.setCtx(ctx);
-            Object responseBody = serviceHandler.handleMessage(messageContext, message.getId(),
-                    new String(message.getBody(), StandardCharsets.UTF_8));
+            Object responseBody = serviceHandler.handleMessage(messageContext, message);
             replyMessage.setStatus(NettyStatus.SUCCESS.getVal());
-            replyMessage.setData(responseBody);
+            if (responseBody != null) {
+                replyMessage.setData(responseBody);
+            }
             writeResponse(ctx, message, replyMessage);
         } catch (Exception e) {
             log.error(String.format("Execute %s causeException", serviceHandler), e);
