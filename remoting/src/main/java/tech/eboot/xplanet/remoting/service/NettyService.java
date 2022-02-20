@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.broker.service;
+package tech.eboot.xplanet.remoting.service;
 
 import java.lang.annotation.*;
 
@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface IMessageService {
+public @interface NettyService {
 
     /**
      * service name

@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.broker.service;
+package tech.eboot.xplanet.remoting.service;
 
 import tech.eboot.xplanet.common.util.JsonUtils;
 
@@ -9,20 +9,20 @@ import java.lang.reflect.Type;
  * @author TangThree
  * Created on 2022/2/1 4:01 PM
  **/
-public abstract class BaseIMessageServiceHandler<T> implements IMessageServiceHandler {
+public abstract class BaseServiceHandler<T> implements NettyServiceHandler {
 
     private final Type messageType;
 
-    public BaseIMessageServiceHandler() {
+    public BaseServiceHandler() {
         Class thisClass = this.getClass();
         Class superClass = null;
         Type superType = null;
         while (true) {
             superClass = thisClass.getSuperclass();
-            if (superClass == BaseIMessageServiceHandler.class) {
+            if (superClass == BaseServiceHandler.class) {
                 superType = thisClass.getGenericSuperclass();
                 if (!(superType instanceof ParameterizedType)) {
-                    throw new IMessageServiceInitializeException(String.format("[%s] must be ParameterizedType"));
+                    throw new ServiceInitializeException(String.format("[%s] must be ParameterizedType"));
                 }
                 this.messageType = ((ParameterizedType)superType).getActualTypeArguments()[0];
                 break;

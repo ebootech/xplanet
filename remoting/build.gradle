@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation project(':common')
     api 'io.netty:netty-all'
     api 'org.slf4j:slf4j-api'
     testImplementation 'org.springframework.boot:spring-boot-starter-logging'

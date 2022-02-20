@@ -1,10 +1,10 @@
-package tech.eboot.xplanet.broker.service;
+package tech.eboot.xplanet.remoting.service;
 
+import cn.hutool.core.util.StrUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import tech.eboot.xplanet.common.util.JsonUtils;
 import tech.eboot.xplanet.remoting.protocol.Message;
 import tech.eboot.xplanet.remoting.protocol.MessageType;
@@ -22,13 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @ChannelHandler.Sharable
 public class ServiceDispatcherChannelHandler extends SimpleChannelInboundHandler<Message> {
 
-    private Map<String, IMessageServiceHandler> nettyServices = new ConcurrentHashMap<>();
+    private Map<String, NettyServiceHandler> nettyServices = new ConcurrentHashMap<>();
 
-    public void registerService(String serviceName, IMessageServiceHandler IMessageServiceHandler) {
+    public void registerService(String serviceName, NettyServiceHandler NettyServiceHandler) {
         if (nettyServices.containsKey(serviceName)) {
             throw new RuntimeException(String.format("The service [%s] has been registered", serviceName));
         }
-        nettyServices.put(serviceName, IMessageServiceHandler);
+        nettyServices.put(serviceName, NettyServiceHandler);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class ServiceDispatcherChannelHandler extends SimpleChannelInboundHandler
             return;
         }
         String serviceName = messageBody.getService();
-        if (StringUtils.isEmpty(serviceName)) {
+        if (StrUtil.isEmpty(serviceName)) {
             replyMessage.setStatus(NettyStatus.BAD_REQUEST, "The Service must not be null");
             writeResponse(ctx, message, replyMessage);
             return;
         }
-        IMessageServiceHandler serviceHandler = nettyServices.get(serviceName);
+        NettyServiceHandler serviceHandler = nettyServices.get(serviceName);
         if (serviceHandler == null) {
             replyMessage.setStatus(NettyStatus.SERVICE_NOT_FOUND, String.format("The Service [%s] is not exist", serviceName));
             writeResponse(ctx, message, replyMessage);

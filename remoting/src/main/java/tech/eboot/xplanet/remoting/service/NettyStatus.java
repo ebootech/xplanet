@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.broker.service;
+package tech.eboot.xplanet.remoting.service;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
