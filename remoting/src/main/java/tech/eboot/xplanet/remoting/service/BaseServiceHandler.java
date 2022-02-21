@@ -1,7 +1,7 @@
 package tech.eboot.xplanet.remoting.service;
 
-import tech.eboot.xplanet.common.util.StringConverter;
 import tech.eboot.xplanet.remoting.protocol.Message;
+import tech.eboot.xplanet.remoting.util.StringConverter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

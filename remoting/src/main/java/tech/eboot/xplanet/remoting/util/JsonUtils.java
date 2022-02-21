@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.common.util;
+package tech.eboot.xplanet.remoting.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;

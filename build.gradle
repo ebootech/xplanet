@@ -80,10 +80,10 @@ subprojects {
     if (!isParentProject) {
         dependencies {
             implementation 'cn.hutool:hutool-all'
-            compileOnly 'org.mapstruct:mapstruct'
+            //compileOnly 'org.mapstruct:mapstruct'
             compileOnly 'org.projectlombok:lombok'
             annotationProcessor 'org.projectlombok:lombok'
-            annotationProcessor 'org.mapstruct:mapstruct-processor'
+            //annotationProcessor 'org.mapstruct:mapstruct-processor'
 
             //testImplementation 'org.springframework.boot:spring-boot-test'
             testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.3'

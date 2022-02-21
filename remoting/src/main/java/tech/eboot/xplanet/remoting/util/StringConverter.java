@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.common.util;
+package tech.eboot.xplanet.remoting.util;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
