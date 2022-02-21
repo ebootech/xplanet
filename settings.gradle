@@ -4,5 +4,3 @@ include 'broker'
 include 'storage'
 include 'dashboard'
 include 'remoting'
-include 'common'
-
