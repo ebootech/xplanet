@@ -117,8 +117,6 @@ public class NettyServer extends NettyAbstract
                 }
             });
 
-            channelHandlers = new ArrayList<>();
-
             isInitialized = true;
         }
 
@@ -180,7 +178,6 @@ public class NettyServer extends NettyAbstract
         if (serviceLoopGroup != null) {
             serviceLoopGroup.shutdownGracefully();
         }
-        log.info("NettyRemotingServer is shutdown!");
     }
 
     private boolean useEpoll() {

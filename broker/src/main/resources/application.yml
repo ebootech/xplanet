@@ -2,9 +2,14 @@ spring:
   application:
     name: broker
 
+
 broker:
   name: broker0
   message:
     port: 10937
-  dispatcher:
+  router:
     port: 11937
+
+logging:
+  level:
+    tech.eboot.xplanet: debug

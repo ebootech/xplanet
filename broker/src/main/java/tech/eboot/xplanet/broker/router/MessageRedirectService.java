@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.broker.dispatch;
+package tech.eboot.xplanet.broker.router;
 
 import org.springframework.stereotype.Service;
 import tech.eboot.xplanet.remoting.protocol.Message;
@@ -11,7 +11,7 @@ import tech.eboot.xplanet.remoting.service.NettyServiceHandler;
  **/
 
 @Service
-public class DispatchService implements NettyServiceHandler {
+public class MessageRedirectService implements NettyServiceHandler {
     @Override
     public Object handleMessage(MessageContext context, Message message) {
         return null;

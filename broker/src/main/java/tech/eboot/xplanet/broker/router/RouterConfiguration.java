@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.broker.dispatch;
+package tech.eboot.xplanet.broker.router;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -7,9 +7,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import tech.eboot.xplanet.broker.properties.BrokerProperties;
+import tech.eboot.xplanet.broker.BrokerProperties;
 import tech.eboot.xplanet.remoting.server.NettyServer;
-import tech.eboot.xplanet.remoting.server.NettyServerConfig;
 import tech.eboot.xplanet.remoting.server.ServerStartupException;
 import tech.eboot.xplanet.remoting.service.ServiceDispatcherChannelHandler;
 
@@ -20,42 +19,43 @@ import tech.eboot.xplanet.remoting.service.ServiceDispatcherChannelHandler;
 
 @Slf4j
 @Configuration
-public class DispatcherServerConfiguration implements InitializingBean, DisposableBean
+public class RouterConfiguration implements InitializingBean, DisposableBean
 {
     @Autowired
     BrokerProperties brokerProperties;
     @Autowired
-    DispatchService dispatchService;
+    MessageRedirectService messageRedirectService;
 
     private NettyServer nettyServer;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        NettyServerConfig config = brokerProperties.getDispatcher().getServer();
+        RouterProperties routerProperties = brokerProperties.getRouter();
         ServiceDispatcherChannelHandler dispatcherChannelHandler = new ServiceDispatcherChannelHandler();
-        dispatcherChannelHandler.registerService("dispatch", dispatchService);
-        nettyServer = new NettyServer(config);
+        dispatcherChannelHandler.registerService("message-redirect", messageRedirectService);
+        nettyServer = new NettyServer(routerProperties);
         nettyServer.registerChannelHandler(dispatcherChannelHandler);
         try {
             nettyServer.start().addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
-                        log.info("MessageServer is running on port: {}", config.getPort());
+                        log.info("RouterServer is running on port: {}", routerProperties.getPort());
                     } else {
-                        log.error("Fail to start MessageServer", future.cause());
+                        log.error("Fail to start RouterServer", future.cause());
                         throw new ServerStartupException(future.cause());
                     }
                 }
             }).sync();
         } catch (InterruptedException e) {
-            log.error("MessageServer is interrupted!", e);
+            log.error("RouterServer is interrupted!", e);
         }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        nettyServer.shutdown();
+        log.warn("RouterServer is shutdown!");
     }
 
 

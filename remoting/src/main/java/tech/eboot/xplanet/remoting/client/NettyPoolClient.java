@@ -135,7 +135,7 @@ public class NettyPoolClient extends NettyAbstract{
         };
     }
 
-    public List<Future<Channel>> start() {
+    public List<Future<Channel>> connect() {
         List<Future<Channel>> futures = new ArrayList<>();
         for (String serverName : inetSocketAddressMap.keySet()) {
             FixedChannelPool pool = channelPoolMap.get(serverName);

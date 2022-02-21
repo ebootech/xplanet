@@ -26,7 +26,7 @@ public class Message
     public static final byte MAGIC_CODE = 88;
 
     private long id;
-    private int type;
+    private byte type;
     private byte[] body;
 
     @Override
@@ -61,11 +61,11 @@ public class Message
                 .build();
     }
 
-    public static Message fromPayload(int type, String payload) {
+    public static Message fromPayload(byte type, String payload) {
         return fromPayload(type, payload == null ? null : payload.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static Message fromPayload(int type, byte[] payload) {
+    public static Message fromPayload(byte type, byte[] payload) {
         return Message.builder()
                 .id(snowflake.nextId())
                 .type(type)

@@ -13,6 +13,7 @@ import tech.eboot.xplanet.remoting.service.MessageContext;
 public class LoginService extends BaseServiceHandler<LoginRequest> {
     @Override
     protected Object handleMessage(MessageContext context, long messageId, LoginRequest message) {
+        log.info("login successfully, accessToken:{}", message.getToken());
         return null;
     }
 }

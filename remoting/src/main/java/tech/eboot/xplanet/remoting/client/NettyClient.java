@@ -97,12 +97,16 @@ public class NettyClient extends NettyAbstract
         isInitialized = true;
     }
 
-    public ChannelFuture connect() {
+    public ChannelFuture connect(int port) {
+        return connect(null, port);
+    }
+
+    public ChannelFuture connect(String host, int port) {
         init();
-        InetSocketAddress address = StrUtil.isBlank(clientConfig.getHost())
-                ? new InetSocketAddress(clientConfig.getPort())
-                : new InetSocketAddress(clientConfig.getHost(), clientConfig.getPort());
-        log.info("Try Connect to RemotingServer:{}...", clientConfig.getHost() + ":" + clientConfig.getPort());
+        InetSocketAddress address = StrUtil.isBlank(host)
+                ? new InetSocketAddress(port)
+                : new InetSocketAddress(host, port);
+        log.info("Try Connect to RemotingServer:{}...", host + ":" + port);
         ChannelFuture future = bootstrap.connect(address);
         future.addListener(new ChannelFutureListener() {
             @Override
@@ -117,7 +121,7 @@ public class NettyClient extends NettyAbstract
                         reconnectExecutorService.schedule(new Runnable() {
                             @Override
                             public void run() {
-                                connect();
+                                connect(host, port);
                             }
                         }, reconnectSeconds, TimeUnit.SECONDS);
                     }

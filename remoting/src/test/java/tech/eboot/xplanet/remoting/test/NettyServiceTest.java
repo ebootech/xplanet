@@ -29,7 +29,7 @@ public class NettyServiceTest
     {
         NettyClient client = new NettyClient(new NettyClientConfig());
         try {
-            client.connect().sync();
+            client.connect(10937).sync();
             Thread.sleep(1000000);
         } catch (InterruptedException e) {
             e.printStackTrace();

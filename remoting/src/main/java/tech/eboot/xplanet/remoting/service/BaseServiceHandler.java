@@ -1,5 +1,7 @@
 package tech.eboot.xplanet.remoting.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tech.eboot.xplanet.remoting.protocol.Message;
 import tech.eboot.xplanet.remoting.util.StringConverter;
 
@@ -14,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 public abstract class BaseServiceHandler<T> implements NettyServiceHandler {
 
     private final Type messageType;
+    protected final Logger log= LoggerFactory.getLogger(this.getClass());
 
     public BaseServiceHandler() {
         Class thisClass = this.getClass();

@@ -35,7 +35,15 @@ public class ServiceDispatcherChannelHandler extends SimpleChannelInboundHandler
         if (message.getType() != MessageType.SERVICE.getValue()) {
             return;
         }
+
         ReplyMessage replyMessage = new ReplyMessage();
+        if (message.getBody() == null || message.getBody().length == 0) {
+            replyMessage.setStatus(NettyStatus.BAD_REQUEST, "message body must not be empty");
+            writeResponse(ctx, message, replyMessage);
+            return;
+        }
+
+
         ServiceMessageBody messageBody;
         try {
             messageBody = JsonUtils.readObject(message.getBody(), ServiceMessageBody.class);

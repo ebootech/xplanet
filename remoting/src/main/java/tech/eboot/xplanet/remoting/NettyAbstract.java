@@ -3,7 +3,6 @@ package tech.eboot.xplanet.remoting;
 import io.netty.channel.ChannelHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,8 +13,8 @@ public abstract class NettyAbstract
 {
     protected List<ChannelHandler> channelHandlers = new ArrayList<>();
 
-    public void registerChannelHandler(ChannelHandler...channelHandlers)
+    public void registerChannelHandler(ChannelHandler channelHandler)
     {
-        this.channelHandlers.addAll(Arrays.asList(channelHandlers));
+        this.channelHandlers.add(channelHandler);
     }
 }

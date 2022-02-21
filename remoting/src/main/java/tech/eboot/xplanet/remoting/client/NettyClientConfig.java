@@ -13,10 +13,8 @@ import tech.eboot.xplanet.remoting.util.NettyConfigUtil;
 @Getter
 public class NettyClientConfig
 {
-    private String host                 = "127.0.0.1";
-    private int port                    = 10937;
-    private int workerThreads           = NettyConfigUtil.availableProcessors;
-    private int userThreads             = NettyConfigUtil.availableProcessors * 2;
+    private int workerThreads           = 1;
+    private int userThreads             = NettyConfigUtil.availableProcessors;
     private int connectTimeoutSeconds   = 30;
     private int reconnectSeconds        = 3;
     private int readerIdleTimeSeconds   = 60;

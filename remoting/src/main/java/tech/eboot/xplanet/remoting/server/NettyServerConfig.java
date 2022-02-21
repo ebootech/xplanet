@@ -22,4 +22,18 @@ public class NettyServerConfig {
     private int readerIdleTimeSeconds    = 60;
     private int maxAuthTimeout           = 30;
 
+    @Override
+    public String toString()
+    {
+        return "NettyServerConfig{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                ", selectorThreads=" + selectorThreads +
+                ", workerThreads=" + workerThreads +
+                ", serviceThreads=" + serviceThreads +
+                ", useEpoll=" + useEpoll +
+                ", readerIdleTimeSeconds=" + readerIdleTimeSeconds +
+                ", maxAuthTimeout=" + maxAuthTimeout +
+                '}';
+    }
 }
