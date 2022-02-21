@@ -1,127 +1,188 @@
 package tech.eboot.xplanet.remoting.util;
 
+import java.util.Date;
+
 /**
  * Author: TangThree
  * created on 2021/7/20 2:14 PM
  */
 public class Snowflake
 {
+    private static final long serialVersionUID = 1L;
 
-    //下面两个每个5位，加起来就是10位的工作机器id
-    private long workerId;    //工作id
-    private long datacenterId;   //数据id
-    //12位的序列号
-    private long sequence;
+    private final long twepoch;
+    private final long workerIdBits = 5L;
+    // 最大支持机器节点数0~31，一共32个
+    @SuppressWarnings({"PointlessBitwiseExpression", "FieldCanBeLocal"})
+    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
+    private final long dataCenterIdBits = 5L;
+    // 最大支持数据中心节点数0~31，一共32个
+    @SuppressWarnings({"PointlessBitwiseExpression", "FieldCanBeLocal"})
+    private final long maxDataCenterId = -1L ^ (-1L << dataCenterIdBits);
+    // 序列号12位
+    private final long sequenceBits = 12L;
+    // 机器节点左移12位
+    private final long workerIdShift = sequenceBits;
+    // 数据中心节点左移17位
+    private final long dataCenterIdShift = sequenceBits + workerIdBits;
+    // 时间毫秒数左移22位
+    private final long timestampLeftShift = sequenceBits + workerIdBits + dataCenterIdBits;
+    // 序列掩码，用于限定序列最大值不能超过4095
+    @SuppressWarnings("FieldCanBeLocal")
+    private final long sequenceMask = ~(-1L << sequenceBits);// 4095
 
-    public Snowflake(long workerId, long datacenterId, long sequence){
-        // sanity check for workerId
-        if (workerId > maxWorkerId || workerId < 0) {
-            throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0",maxWorkerId));
-        }
-        if (datacenterId > maxDatacenterId || datacenterId < 0) {
-            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0",maxDatacenterId));
-        }
-        System.out.printf("worker starting. timestamp left shift %d, datacenter id bits %d, worker id bits %d, sequence bits %d, workerid %d",
-                timestampLeftShift, datacenterIdBits, workerIdBits, sequenceBits, workerId);
-
-        this.workerId = workerId;
-        this.datacenterId = datacenterId;
-        this.sequence = sequence;
-    }
-
-    //初始时间戳
-    private long twepoch = 1288834974657L;
-
-    //长度为5位
-    private long workerIdBits = 5L;
-    private long datacenterIdBits = 5L;
-    //最大值
-    private long maxWorkerId = -1L ^ (-1L << workerIdBits);
-    private long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
-    //序列号id长度
-    private long sequenceBits = 12L;
-    //序列号最大值
-    private long sequenceMask = -1L ^ (-1L << sequenceBits);
-
-    //工作id需要左移的位数，12位
-    private long workerIdShift = sequenceBits;
-    //数据id需要左移位数 12+5=17位
-    private long datacenterIdShift = sequenceBits + workerIdBits;
-    //时间戳需要左移位数 12+5+5=22位
-    private long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-
-    //上次时间戳，初始值为负数
+    private final long workerId;
+    private final long dataCenterId;
+    private final boolean useSystemClock;
+    private long sequence = 0L;
     private long lastTimestamp = -1L;
 
-    public long getWorkerId(){
-        return workerId;
+    /**
+     * 构造
+     *
+     * @param workerId     终端ID
+     * @param dataCenterId 数据中心ID
+     */
+    public Snowflake(long workerId, long dataCenterId) {
+        this(workerId, dataCenterId, false);
     }
 
-    public long getDatacenterId(){
-        return datacenterId;
+    /**
+     * 构造
+     *
+     * @param workerId         终端ID
+     * @param dataCenterId     数据中心ID
+     * @param isUseSystemClock 是否使用{@link SystemClock} 获取当前时间戳
+     */
+    public Snowflake(long workerId, long dataCenterId, boolean isUseSystemClock) {
+        this(null, workerId, dataCenterId, isUseSystemClock);
     }
 
-    public long getTimestamp(){
-        return System.currentTimeMillis();
+    /**
+     * @param epochDate        初始化时间起点（null表示默认起始日期）,后期修改会导致id重复,如果要修改连workerId dataCenterId，慎用
+     * @param workerId         工作机器节点id
+     * @param dataCenterId     数据中心id
+     * @param isUseSystemClock 是否使用{@link SystemClock} 获取当前时间戳
+     * @since 5.1.3
+     */
+    public Snowflake(Date epochDate, long workerId, long dataCenterId, boolean isUseSystemClock) {
+        if (null != epochDate) {
+            this.twepoch = epochDate.getTime();
+        } else{
+            // Thu, 04 Nov 2010 01:42:54 GMT
+            this.twepoch = 1288834974657L;
+        }
+        if (workerId > maxWorkerId || workerId < 0) {
+            throw new IllegalArgumentException(String.format("worker Id can't be greater than %s or less than 0", maxWorkerId));
+        }
+        if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %s or less than 0", maxDataCenterId));
+        }
+        this.workerId = workerId;
+        this.dataCenterId = dataCenterId;
+        this.useSystemClock = isUseSystemClock;
     }
 
-    //下一个ID生成算法
+    /**
+     * 根据Snowflake的ID，获取机器id
+     *
+     * @param id snowflake算法生成的id
+     * @return 所属机器的id
+     */
+    public long getWorkerId(long id) {
+        return id >> workerIdShift & ~(-1L << workerIdBits);
+    }
+
+    /**
+     * 根据Snowflake的ID，获取数据中心id
+     *
+     * @param id snowflake算法生成的id
+     * @return 所属数据中心
+     */
+    public long getDataCenterId(long id) {
+        return id >> dataCenterIdShift & ~(-1L << dataCenterIdBits);
+    }
+
+    /**
+     * 根据Snowflake的ID，获取生成时间
+     *
+     * @param id snowflake算法生成的id
+     * @return 生成的时间
+     */
+    public long getGenerateDateTime(long id) {
+        return (id >> timestampLeftShift & ~(-1L << 41L)) + twepoch;
+    }
+
+    /**
+     * 下一个ID
+     *
+     * @return ID
+     */
     public synchronized long nextId() {
-        long timestamp = timeGen();
-
-        //获取当前时间戳如果小于上次时间戳，则表示时间戳获取出现异常
-        if (timestamp < lastTimestamp) {
-            System.err.printf("clock is moving backwards.  Rejecting requests until %d.", lastTimestamp);
-            throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
-                    lastTimestamp - timestamp));
+        long timestamp = genTime();
+        if (timestamp < this.lastTimestamp) {
+            if(this.lastTimestamp - timestamp < 2000){
+                // 容忍2秒内的回拨，避免NTP校时造成的异常
+                timestamp = lastTimestamp;
+            } else{
+                // 如果服务器时间有问题(时钟后退) 报错。
+                throw new IllegalStateException(String.format("Clock moved backwards. Refusing to generate id for %sms", lastTimestamp - timestamp));
+            }
         }
 
-        //获取当前时间戳如果等于上次时间戳（同一毫秒内），则在序列号加一；否则序列号赋值为0，从0开始。
-        if (lastTimestamp == timestamp) {
-            sequence = (sequence + 1) & sequenceMask;
+        if (timestamp == this.lastTimestamp) {
+            final long sequence = (this.sequence + 1) & sequenceMask;
             if (sequence == 0) {
                 timestamp = tilNextMillis(lastTimestamp);
             }
+            this.sequence = sequence;
         } else {
-            sequence = 0;
+            sequence = 0L;
         }
 
-        //将上次时间戳值刷新
         lastTimestamp = timestamp;
 
-        /**
-         * 返回结果：
-         * (timestamp - twepoch) << timestampLeftShift) 表示将时间戳减去初始时间戳，再左移相应位数
-         * (datacenterId << datacenterIdShift) 表示将数据id左移相应位数
-         * (workerId << workerIdShift) 表示将工作id左移相应位数
-         * | 是按位或运算符，例如：x | y，只有当x，y都为0的时候结果才为0，其它情况结果都为1。
-         * 因为个部分只有相应位上的值有意义，其它位上都是0，所以将各部分的值进行 | 运算就能得到最终拼接好的id
-         */
-        return ((timestamp - twepoch) << timestampLeftShift) |
-                (datacenterId << datacenterIdShift) |
-                (workerId << workerIdShift) |
-                sequence;
+        return ((timestamp - twepoch) << timestampLeftShift) | (dataCenterId << dataCenterIdShift) | (workerId << workerIdShift) | sequence;
     }
 
-    //获取时间戳，并与上次时间戳比较
+    /**
+     * 下一个ID（字符串形式）
+     *
+     * @return ID 字符串形式
+     */
+    public String nextIdStr() {
+        return Long.toString(nextId());
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------------------ Private method start
+
+    /**
+     * 循环等待下一个时间
+     *
+     * @param lastTimestamp 上次记录的时间
+     * @return 下一个时间
+     */
     private long tilNextMillis(long lastTimestamp) {
-        long timestamp = timeGen();
-        while (timestamp <= lastTimestamp) {
-            timestamp = timeGen();
+        long timestamp = genTime();
+        // 循环直到操作系统时间戳变化
+        while (timestamp == lastTimestamp) {
+            timestamp = genTime();
+        }
+        if (timestamp < lastTimestamp) {
+            // 如果发现新的时间戳比上次记录的时间戳数值小，说明操作系统时间发生了倒退，报错
+            throw new IllegalStateException(
+                    String.format("Clock moved backwards. Refusing to generate id for %sms", lastTimestamp - timestamp));
         }
         return timestamp;
     }
 
-    //获取系统时间戳
-    private long timeGen(){
-        return System.currentTimeMillis();
+    /**
+     * 生成时间戳
+     *
+     * @return 时间戳
+     */
+    private long genTime() {
+        return this.useSystemClock ? SystemClock.now() : System.currentTimeMillis();
     }
-
-    //---------------测试---------------
-    public static void main(String[] args) {
-        Snowflake worker = new Snowflake(1,1,1);
-        for (int i = 0; i < 30; i++) {
-            System.out.println(worker.nextId());
-        }
-    }
+    // ------------------------------------------------------------------------------------------------------------------------------------ Private method end
 }

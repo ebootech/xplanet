@@ -1,19 +1,18 @@
-package tech.eboot.xplanet.connector.test;
+package tech.eboot.xplanet.client.test;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import tech.eboot.xplanet.connector.MessageListener;
-import tech.eboot.xplanet.connector.XPlanetClient;
+import tech.eboot.xplanet.client.MessageListener;
+import tech.eboot.xplanet.client.SimpleXPlanetClient;
 import tech.eboot.xplanet.remoting.client.NettyClientConfig;
+import tech.eboot.xplanet.remoting.client.NettyPoolClient;
+import tech.eboot.xplanet.remoting.client.NettyPoolClientConfig;
 import tech.eboot.xplanet.remoting.protocol.Message;
 import tech.eboot.xplanet.remoting.protocol.MessageType;
 import tech.eboot.xplanet.remoting.service.ServiceMessageBody;
 import tech.eboot.xplanet.remoting.util.JsonUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class XPlanetClientTest
         };
 
         //创建一个客户端
-        XPlanetClient client = new XPlanetClient(new NettyClientConfig(), messageListener);
+        SimpleXPlanetClient client = new SimpleXPlanetClient(new NettyClientConfig(), messageListener);
 
         //连接服务器
         Channel channel;
@@ -76,6 +75,22 @@ public class XPlanetClientTest
             }
         });
 
+        Thread.sleep(100000000);
+    }
+
+
+    @Test
+    public void XPlanetPoolClient2() throws InterruptedException {
+        NettyPoolClientConfig config = new NettyPoolClientConfig();
+        config.setServerAddress("127.0.0.1:10937");
+        NettyPoolClient client = new NettyPoolClient(config);
+        client.registerChannelHandler(new SimpleChannelInboundHandler<Message>() {
+            @Override
+            protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
+                log.info("收到消息:{}", msg);
+            }
+        });
+        client.connect().get(0).sync();
         Thread.sleep(100000000);
     }
 }

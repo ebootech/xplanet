@@ -1,5 +1,5 @@
 rootProject.name = 'xplanet'
-include 'connector'
+include 'client'
 include 'broker'
 include 'storage'
 include 'dashboard'

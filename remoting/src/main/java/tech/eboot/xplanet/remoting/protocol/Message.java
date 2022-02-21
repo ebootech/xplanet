@@ -21,7 +21,7 @@ public class Message
     private static final Snowflake snowflake = new Snowflake(
             new Random().nextInt(31),
             new Random().nextInt(31),
-            1);
+            true);
 
     public static final byte MAGIC_CODE = 88;
 

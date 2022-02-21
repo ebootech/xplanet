@@ -1,3 +1,5 @@
+archivesBaseName='xplanet-client'
+
 dependencies {
     implementation project(':remoting')
     implementation 'org.springframework.boot:spring-boot-starter-logging'

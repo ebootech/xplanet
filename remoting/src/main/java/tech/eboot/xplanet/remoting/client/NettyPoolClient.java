@@ -95,7 +95,6 @@ public class NettyPoolClient extends NettyAbstract{
             }
             inetSocketAddressMap.put(serverName, new InetSocketAddress(address.getHost(), address.getPort()));
         }
-
         channelPoolMap = new AbstractChannelPoolMap<String, FixedChannelPool>() {
             @Override
             protected FixedChannelPool newPool(String key) {
@@ -136,6 +135,7 @@ public class NettyPoolClient extends NettyAbstract{
     }
 
     public List<Future<Channel>> connect() {
+        init();
         List<Future<Channel>> futures = new ArrayList<>();
         for (String serverName : inetSocketAddressMap.keySet()) {
             FixedChannelPool pool = channelPoolMap.get(serverName);

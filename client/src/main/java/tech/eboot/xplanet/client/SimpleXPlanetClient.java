@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.connector;
+package tech.eboot.xplanet.client;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,13 +14,13 @@ import tech.eboot.xplanet.remoting.protocol.Message;
  **/
 
 @Slf4j
-public class XPlanetClient
+public class SimpleXPlanetClient
 {
     private NettyClientConfig clientConfig;
     private NettyClient client;
     private MessageListener messageListener;
 
-    public XPlanetClient(NettyClientConfig clientConfig, MessageListener messageListener)
+    public SimpleXPlanetClient(NettyClientConfig clientConfig, MessageListener messageListener)
     {
         this.clientConfig = clientConfig;
         this.messageListener = messageListener;
