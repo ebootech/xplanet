@@ -1,7 +1,7 @@
 package tech.eboot.xplanet.remoting.service;
 
-import cn.hutool.json.JSONUtil;
 import lombok.*;
+import tech.eboot.xplanet.remoting.util.JsonUtils;
 
 /**
  * @author TangThree
@@ -37,7 +37,7 @@ public class ReplyMessage {
         return "NettyResponse{" +
                 "status=" + status +
                 ", msg='" + msg + '\'' +
-                ", data=" + JSONUtil.toJsonStr(data) +
+                ", data=" + (data == null ? null : JsonUtils.toJson(data)) +
                 '}';
     }
 }

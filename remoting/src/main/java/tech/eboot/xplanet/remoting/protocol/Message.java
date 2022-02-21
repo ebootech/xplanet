@@ -1,7 +1,7 @@
 package tech.eboot.xplanet.remoting.protocol;
 
-import cn.hutool.core.lang.Snowflake;
 import lombok.*;
+import tech.eboot.xplanet.remoting.util.Snowflake;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
@@ -21,7 +21,7 @@ public class Message
     private static final Snowflake snowflake = new Snowflake(
             new Random().nextInt(31),
             new Random().nextInt(31),
-            true);
+            1);
 
     public static final byte MAGIC_CODE = 88;
 

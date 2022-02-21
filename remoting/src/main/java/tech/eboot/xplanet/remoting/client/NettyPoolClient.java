@@ -1,6 +1,5 @@
 package tech.eboot.xplanet.remoting.client;
 
-import cn.hutool.core.util.StrUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -14,6 +13,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.eboot.xplanet.remoting.NettyAbstract;
 import tech.eboot.xplanet.remoting.protocol.Message;
@@ -90,7 +90,7 @@ public class NettyPoolClient extends NettyAbstract{
         ServerAddress[] serverAddresses = NettyConfigUtil.resolveServerAddress(serverAddress);
         for (ServerAddress address : serverAddresses) {
             String serverName = address.getName();
-            if (StrUtil.isBlank(serverName)) {
+            if (StringUtil.isNullOrEmpty(serverName)) {
                 serverName = address.getHost() + ":" + address.getPort();
             }
             inetSocketAddressMap.put(serverName, new InetSocketAddress(address.getHost(), address.getPort()));
@@ -100,7 +100,7 @@ public class NettyPoolClient extends NettyAbstract{
             @Override
             protected FixedChannelPool newPool(String key) {
                 InetSocketAddress inetSocketAddress = null;
-                if (StrUtil.isBlank(key)) {
+                if (StringUtil.isNullOrEmpty(key)) {
                     throw new IllegalArgumentException("The ServerName must not be null");
                 }
                 inetSocketAddress= inetSocketAddressMap.get(key);
