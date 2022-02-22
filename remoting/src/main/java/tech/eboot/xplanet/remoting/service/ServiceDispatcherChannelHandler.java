@@ -1,9 +1,9 @@
 package tech.eboot.xplanet.remoting.service;
 
-import cn.hutool.core.util.StrUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.eboot.xplanet.remoting.protocol.Message;
 import tech.eboot.xplanet.remoting.protocol.MessageType;
@@ -54,7 +54,7 @@ public class ServiceDispatcherChannelHandler extends SimpleChannelInboundHandler
             return;
         }
         String serviceName = messageBody.getService();
-        if (StrUtil.isEmpty(serviceName)) {
+        if (StringUtil.isNullOrEmpty(serviceName)) {
             replyMessage.setStatus(NettyStatus.BAD_REQUEST, "The Service must not be null");
             writeResponse(ctx, message, replyMessage);
             return;

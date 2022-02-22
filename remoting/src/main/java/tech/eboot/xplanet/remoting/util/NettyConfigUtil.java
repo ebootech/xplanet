@@ -1,7 +1,7 @@
 package tech.eboot.xplanet.remoting.util;
 
-import cn.hutool.core.util.StrUtil;
 import io.netty.util.NettyRuntime;
+import io.netty.util.internal.StringUtil;
 
 /**
  * @author TangThree
@@ -12,7 +12,7 @@ public class NettyConfigUtil {
 
     public static ServerAddress[] resolveServerAddress(String serverAddress)
     {
-        if (StrUtil.isBlank(serverAddress) || !serverAddress.contains(":")) {
+        if (StringUtil.isNullOrEmpty(serverAddress) || !serverAddress.contains(":")) {
             throw new IllegalArgumentException("Invalid serverAddress: " + serverAddress);
         }
         String[] addrs = serverAddress.split(";");

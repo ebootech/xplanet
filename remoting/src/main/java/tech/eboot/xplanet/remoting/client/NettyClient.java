@@ -1,6 +1,5 @@
 package tech.eboot.xplanet.remoting.client;
 
-import cn.hutool.core.util.StrUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -8,6 +7,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import tech.eboot.xplanet.remoting.NettyAbstract;
 import tech.eboot.xplanet.remoting.protocol.Message;
@@ -103,7 +103,7 @@ public class NettyClient extends NettyAbstract
 
     public ChannelFuture connect(String host, int port) {
         init();
-        InetSocketAddress address = StrUtil.isBlank(host)
+        InetSocketAddress address = StringUtil.isNullOrEmpty(host)
                 ? new InetSocketAddress(port)
                 : new InetSocketAddress(host, port);
         log.info("Try Connect to RemotingServer:{}...", host + ":" + port);

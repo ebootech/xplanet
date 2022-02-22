@@ -79,7 +79,9 @@ subprojects {
 
     if (!isParentProject) {
         dependencies {
-            implementation 'cn.hutool:hutool-all'
+            /*if (!project.name.equals("remoting")) {
+                implementation 'cn.hutool:hutool-all'
+            }*/
             //compileOnly 'org.mapstruct:mapstruct'
             compileOnly 'org.projectlombok:lombok'
             annotationProcessor 'org.projectlombok:lombok'

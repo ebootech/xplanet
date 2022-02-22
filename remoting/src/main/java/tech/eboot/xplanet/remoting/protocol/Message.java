@@ -1,7 +1,7 @@
 package tech.eboot.xplanet.remoting.protocol;
 
-import cn.hutool.core.lang.Snowflake;
 import lombok.*;
+import tech.eboot.xplanet.remoting.util.Snowflake;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Random;

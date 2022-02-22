@@ -1,4 +1,4 @@
-package tech.eboot.xplanet.connector;
+package tech.eboot.xplanet.client;
 
 import io.netty.channel.Channel;
 import tech.eboot.xplanet.remoting.protocol.Message;
